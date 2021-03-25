@@ -4,24 +4,40 @@ async function getConnectedDevices(type) {
   const devices = await navigator.mediaDevices.enumerateDevices();
   return devices.filter(device => device.kind === type)
 } 
+let selectedDeviceId;
+const codeReader = new ZXing.BrowserMultiFormatReader();
+codeReader.listVideoInputDevices()
+  .then(async (videoInputDevices) => {
+    const sourceSelect = document.getElementById('sourceSelect')
+    if (videoInputDevices.length >= 1) {
+      videoInputDevices.forEach((element) => {
+          const sourceOption = document.createElement('option')
+          sourceOption.text = element.label
+          sourceOption.value = element.deviceId
+          sourceSelect.appendChild(sourceOption)
+      })
 
-async function devices() {
-  const devices = await navigator.mediaDevices.enumerateDevices();
-  let valor =  devices.filter(device => device.kind === 'videoinput')
-  return valor;
-} 
+      sourceSelect.onchange = () => {
+          selectedDeviceId = sourceSelect.value;
+      };
 
-devices().then(async (valor)=>{
-  console.log("valor", valor)
-  const configCamera = {video: {exact:{deviceId: valor[valor.length - 1].deviceId} }, audio: false}
-  
-  document.getElementById("texto").textContent = valor.map(vl => vl.label)
-  
-  console.log("config",configCamera);
-  
-  await camera(configCamera);
-   return 'ok';
-}).catch((err) => {console.log(err)})
+      const sourceSelectPanel = document.getElementById('sourceSelectPanel')
+      sourceSelectPanel.style.display = 'block'
+      // enviar(selectedDeviceId)
+    }
+
+    selectedDeviceId = videoInputDevices[videoInputDevices.length - 1].deviceId
+    console.log("videos",videoInputDevices)
+
+    document.getElementById("texto").textContent = videoInputDevices.map(vl => vl.label)
+    console.log("config",{video: {exact:{deviceId: selectedDeviceId} }, audio: false})
+
+    // await camera({video: {exact:{deviceId: selectedDeviceId }}, audio: false});
+
+    codeReader.decodeFromVideoDevice(selectedDeviceId, 'video',()=>{})
+    camera({video: {exact:{deviceId: selectedDeviceId }}, audio: false})
+  })
+  .catch(err=>err);
 
 
 
@@ -59,15 +75,14 @@ async function camera(config) {
 
   console.log("configCamera", config);
   
-   navigator.mediaDevices.getUserMedia(config)
-    .then(function(stream) {
-      video.srcObject = stream;
-      // camera = stream;
-      video.play();
-    })
-    .catch(function(err) {
-      console.log("An error occurred: " + err);
-    });
+  //  navigator.mediaDevices.getUserMedia(config)
+  //   .then(function(stream) {
+  //     video.srcObject = stream;
+  //     video.play();
+  //   })
+  //   .catch(function(err) {
+  //     console.log("An error occurred: " + err);
+  //   });
 
     video.addEventListener('canplay', function(ev){
       if (!streaming) {
@@ -104,8 +119,7 @@ async function camera(config) {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     var data = canvas.toDataURL('image/png');
-    // valor = canvas.toDataURL('image/png');
-    // console.log('tirou',data);
+    
     photo.setAttribute('src', data);
   }
   
@@ -125,8 +139,8 @@ async function camera(config) {
       var data = canvas.toDataURL('image/png');
       valor = canvas.toDataURL('image/png');
       
-      // console.log('tirou',data);
-
+      console.log('tirou',data);
+      
       photo.setAttribute('src', data);
     } else {
       clearphoto();
@@ -137,5 +151,8 @@ async function camera(config) {
   // once loading is complete.
   startup();
   // window.addEventListener('load', startup, false);
-  return 'ok';
 }
+
+function enviaImage(base64){
+  
+};
