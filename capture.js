@@ -12,8 +12,8 @@ async function devices() {
 } 
 
 devices().then(async (valor)=>{
-
-  const configCamera = {video: {exact:{deviceId: valor[0].deviceId} }, audio: false}
+  console.log("valor", valor)
+  const configCamera = {video: {exact:{deviceId: valor[1].deviceId} }, audio: false}
   
   console.log("config",configCamera);
   
@@ -21,13 +21,6 @@ devices().then(async (valor)=>{
    return 'ok';
 }).catch((err) => {console.log(err)})
 
-// getConnectedDevices('videoinput').then((valor) => {
-//   videoCameras = valor;
-//   console.log(valor);
-  
-// }).catch();
-
-// console.log(videoCameras[0]);
 
 
 async function camera(config) {
@@ -64,7 +57,7 @@ async function camera(config) {
 
   console.log("configCamera", config);
   
-  await navigator.mediaDevices.getUserMedia(config)
+   navigator.mediaDevices.getUserMedia(config)
     .then(function(stream) {
       video.srcObject = stream;
       // camera = stream;
@@ -140,5 +133,7 @@ async function camera(config) {
 
   // Set up our event listener to run the startup process
   // once loading is complete.
-  window.addEventListener('load', startup, false);
+  startup();
+  // window.addEventListener('load', startup, false);
+  return 'ok';
 }
