@@ -11,13 +11,13 @@ async function devices() {
   return valor;
 } 
 
-devices().then((valor)=>{
+devices().then(async (valor)=>{
 
   const configCamera = {video: {exact:{deviceId: valor[0].deviceId} }, audio: false}
   
   console.log("config",configCamera);
   
-  camera(configCamera);
+  await camera(configCamera);
    return 'ok';
 }).catch((err) => {console.log(err)})
 
@@ -30,7 +30,7 @@ devices().then((valor)=>{
 // console.log(videoCameras[0]);
 
 
-function camera(config) {
+async function camera(config) {
   
   // The width and height of the captured photo. We will set the
   // width to the value defined here, but the height will be
@@ -67,7 +67,7 @@ function camera(config) {
   await navigator.mediaDevices.getUserMedia(config)
     .then(function(stream) {
       video.srcObject = stream;
-      camera = stream;
+      // camera = stream;
       video.play();
     })
     .catch(function(err) {
