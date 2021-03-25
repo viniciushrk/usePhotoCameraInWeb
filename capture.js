@@ -1,4 +1,36 @@
-(async function() {
+let videoCameras =  null;
+
+async function getConnectedDevices(type) {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  return devices.filter(device => device.kind === type)
+} 
+
+async function devices() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  let valor =  devices.filter(device => device.kind === 'videoinput')
+  return valor;
+} 
+
+devices().then((valor)=>{
+
+  const configCamera = {video: {exact:{deviceId: valor[0].deviceId} }, audio: false}
+  
+  console.log("config",configCamera);
+  
+  camera(configCamera);
+   return 'ok';
+}).catch((err) => {console.log(err)})
+
+// getConnectedDevices('videoinput').then((valor) => {
+//   videoCameras = valor;
+//   console.log(valor);
+  
+// }).catch();
+
+// console.log(videoCameras[0]);
+
+
+function camera(config) {
   
   // The width and height of the captured photo. We will set the
   // width to the value defined here, but the height will be
@@ -19,9 +51,8 @@
   var canvas = null;
   var photo = null;
   var startbutton = null;
-  let videoCameras =  null;
 
-  function startup() {
+  async function startup() {
     video = document.getElementById('video');
     canvas = document.getElementById('canvas');
     
@@ -30,32 +61,10 @@
     
     startbutton = document.getElementById('startbutton');
 
-  async function getConnectedDevices(type) {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    return devices.filter(device => device.kind === type)
-  } 
-  
-  
-  
-  getConnectedDevices('videoinput').then((valor)=>{
-     console.log(valor)
-     cameraTeste = valor;
-  }).catch();
 
-  // function connectCamera(devices){
-  //   video.srcObject = devices[devices.length - 1];
-  //   camera = devices;
-  //   video.play();
-  //   console.log('device', devices[devices.length - 1]);
-  // }
-  // connectCamera(cameraTeste);
-
- 
+  console.log("configCamera", config);
   
-  // console.log('Cameras found:', videoCameras);
-
-  
-  navigator.mediaDevices.getUserMedia({video: {exact:{deviceId: cameraTeste[0].deviceId} }, audio: false})
+  await navigator.mediaDevices.getUserMedia(config)
     .then(function(stream) {
       video.srcObject = stream;
       camera = stream;
@@ -71,7 +80,6 @@
       
         // Firefox currently has a bug where the height can't be read from
         // the video, so we will make assumptions if this happens.
-      
         if (isNaN(height)) {
           height = width / (4/3);
         }
@@ -133,4 +141,4 @@
   // Set up our event listener to run the startup process
   // once loading is complete.
   window.addEventListener('load', startup, false);
-})();
+}
