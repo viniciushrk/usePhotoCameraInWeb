@@ -55,7 +55,7 @@
   // console.log('Cameras found:', videoCameras);
 
   
-  navigator.mediaDevices.getUserMedia({video: {deviceId: cameraTeste[1].deviceId }, audio: false})
+  navigator.mediaDevices.getUserMedia({video: {deviceId: cameraTeste[0].deviceId }, audio: false})
     .then(function(stream) {
       video.srcObject = stream;
       camera = stream;
