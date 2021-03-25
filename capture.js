@@ -13,7 +13,7 @@ async function devices() {
 
 devices().then(async (valor)=>{
   console.log("valor", valor)
-  const configCamera = {video: {exact:{deviceId: valor[1].deviceId} }, audio: false}
+  const configCamera = {video: {exact:{deviceId: valor[valor.length - 1].deviceId} }, audio: false}
   
   console.log("config",configCamera);
   
