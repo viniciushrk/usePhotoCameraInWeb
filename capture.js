@@ -15,6 +15,8 @@ devices().then(async (valor)=>{
   console.log("valor", valor)
   const configCamera = {video: {exact:{deviceId: valor[valor.length - 1].deviceId} }, audio: false}
   
+  document.getElementById("texto").textContent = valor.map(vl => vl.label)
+  
   console.log("config",configCamera);
   
   await camera(configCamera);
